@@ -1,44 +1,109 @@
 package com.example.ClinicaOdontologicaSpringMVC.Controller;
 
-import com.example.ClinicaOdontologicaSpringMVC.Dto.TurnoDTO;
-import com.example.ClinicaOdontologicaSpringMVC.Entity.Odontologo;
-import com.example.ClinicaOdontologicaSpringMVC.Entity.Paciente;
-import com.example.ClinicaOdontologicaSpringMVC.Entity.Turno;
-import com.example.ClinicaOdontologicaSpringMVC.Service.OdontologoService;
-import com.example.ClinicaOdontologicaSpringMVC.Service.PacienteService;
-import com.example.ClinicaOdontologicaSpringMVC.Service.TurnoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.ClinicaOdontologicaSpringMVC.Dto.entrada.modificacion.TurnoModificacionEntradaDto;
+import com.example.ClinicaOdontologicaSpringMVC.Dto.entrada.turno.TurnoEntradaDto;
+import com.example.ClinicaOdontologicaSpringMVC.Dto.salida.turno.TurnoSalidaDto;
+import com.example.ClinicaOdontologicaSpringMVC.Service.ITurnoService;
+import com.example.ClinicaOdontologicaSpringMVC.exceptions.BadRequestException;
+import com.example.ClinicaOdontologicaSpringMVC.exceptions.ResourceNotFoundException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/turno")
+@CrossOrigin
+@RequestMapping("/turnos")
 public class TurnoController {
-    @Autowired
-    private TurnoService turnoService;
-    @Autowired
-    private PacienteService pacienteService;
-    @Autowired
-    private OdontologoService odontologoService;
+    private final ITurnoService turnoService; //La capa Controller depende de la capa Service
 
-
-    @PostMapping
-    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody Turno turno){
-        Optional<Paciente> pacienteBuscado= pacienteService.buscarPorId(turno.getPaciente().getId());
-        Optional<Odontologo> odontologoBuscado= odontologoService.buscarPorId(turno.getOdontologo().getId());
-        if(pacienteBuscado.isPresent()&&odontologoBuscado.isPresent()){
-            turno.setPaciente(pacienteBuscado.get());
-            turno.setOdontologo(odontologoBuscado.get());
-            return ResponseEntity.ok(turnoService.registrarTurno(turno)); //si el retorno es correcto , seria un 200
-        }else{
-            return ResponseEntity.badRequest().build();
-        }
+    public TurnoController(ITurnoService turnoService) {
+        this.turnoService = turnoService;
     }
-    @GetMapping
-    public ResponseEntity<List<TurnoDTO>> listarTodos(){
-        return ResponseEntity.ok(turnoService.listarTodos());
+
+    @Operation(summary = "Registro de un nuevo turno")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Turno registrado correctamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TurnoSalidaDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Server error",
+                    content = @Content)
+    })
+
+    @PostMapping("registrar")
+    public ResponseEntity<TurnoSalidaDto> registrarTurno(@Valid @RequestBody TurnoEntradaDto turno) throws BadRequestException {
+        return new ResponseEntity<>(turnoService.registrarTurno(turno), HttpStatus.CREATED);
+    }
+    @Operation(summary = "Modificar un turno")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Turno modificado",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TurnoSalidaDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Turno no encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Server error",
+                    content = @Content)
+    })
+    @PutMapping ("modificar")
+    public ResponseEntity<TurnoSalidaDto> modificarTurno(@Valid @RequestBody TurnoModificacionEntradaDto turno) throws ResourceNotFoundException {
+        return new ResponseEntity<>(turnoService.modificarTurno(turno), HttpStatus.OK);
+    }
+    @Operation(summary = "Buscar Turno por Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Turno encontrado",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TurnoSalidaDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Id inválido",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Server error",
+                    content = @Content)
+    })
+
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<TurnoSalidaDto> buscarTurnoPorId (@PathVariable int id){
+        return new ResponseEntity<>(turnoService.buscarTurnoPorId(id), HttpStatus.OK);
+    }
+    @Operation(summary = "Eliminar Turno por Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Turno eliminado",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TurnoSalidaDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Id inválido",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Turno no encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Server error",
+                    content = @Content)
+    })
+    @DeleteMapping ("eliminar/{id}")
+    public ResponseEntity<String> eliminarTurnoPorId (@PathVariable int id) throws ResourceNotFoundException {
+        turnoService.eliminarTurno(id);
+        return ResponseEntity.ok(("Se eliminó el turno con id " + id));
+    }
+    @Operation(summary = "Listado de todos los Turnos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado de Turnos",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TurnoSalidaDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Server error",
+                    content = @Content)
+    })
+
+    @GetMapping("listar")
+    public ResponseEntity<List<TurnoSalidaDto>> listarTodosLosTurnos(){
+        return new ResponseEntity<>(turnoService.listarTurnos(), HttpStatus.OK);
     }
 }

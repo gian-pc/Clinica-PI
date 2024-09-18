@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Odontólogos</title>
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+  <link href="../css/docs.css" rel="stylesheet">
+  <script src="../js/color-modes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js" defer></script>
+  <script type="text/javascript" src="../js/turnos/getTurnos.js" defer></script>
+  <script type="text/javascript" src="../js/turnos/postTurno.js" defer></script>
+  <script type="text/javascript" src="../js/turnos/updateTurno.js" defer></script>
+  <script type="text/javascript" src="../js/turnos/deleteTurno.js" defer></script>
+  <script src="https://kit.fontawesome.com/fb802798e2.js" crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+  <!--Nav bar-->
+  <header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary "  data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"> <i class="fa-solid fa-tooth"></i> Clínica Dental</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="./odontologos.html">Odontólogos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="./pacientes.html">Pacientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" href="./turnos.html">Turnos</a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main>
+
+    <!--Section tabla de Odontologos-->
+    <section class="container pt-4" style="min-height: calc(100vh - 361.2px)">
+      <div class="d-flex justify-content-between flex-column align-items-center flex-xs-column flex-sm-row">
+        <h1 class="pt-3">Gestión de Turnos</h1>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="height: 37.6px;">
+          Agregar Turno
+        </button>
+      </div>
+
+
+      <!-- Modal New Turno-->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Agregar Turno</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action method="POST" name="formularioTurno" id="formularioTurno">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="fecha" class="form-label">Fecha del turno</label>
+                  <input type="date" class="form-control" id="fecha" placeholder="Fecha">
+                </div>
+                <div class="mb-3">
+                  <label for="hora" class="form-label">Hora del turno</label>
+                  <input type="time" class="form-control" id="hora" placeholder="Hora del turno">
+                </div>
+                <div class="mb-3">
+                  <label for="id_paciente" class="form-label">Id paciente</label>
+                  <input type="number" class="form-control" id="id_paciente" placeholder="Id paciente">
+                </div>
+                <div class="mb-3">
+                  <label for="id_odontologo" class="form-label">Id odontologo</label>
+                  <input type="number" class="form-control" id="id_odontologo" placeholder="Id odontologo">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="div_pelicula_table">
+        <h2 class="pt-3">Listado de Turnos disponibles</h2>
+        <!--Contenedor de la tabla-->
+        <div class="row  table-responsive ">
+          <table id="odontologoTable" class="table table-striped  ">
+            <thead class="table-dark">
+              <tr>
+                <th>Id Turno</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Id Paciente</th>
+                <th>Apellido</th>
+                <th>Id Odontologo</th>
+                <th>Apellido</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody id="odontologoTableBody">
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal update Turno -->
+      <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel2">Modificar Turno</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action method="PUT" name="formularioTurnoUpdate" id="formularioTurnoUpdate">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="idUpdate" class="form-label">id</label>
+                  <input type="text" class="form-control" id="idUpdate" placeholder="id" disabled>
+                </div>
+                <div class="mb-3">
+                  <label for="fecha" class="form-label">Fecha del turno</label>
+                  <input type="date" class="form-control" id="fechaUpdate" placeholder="Fecha">
+                </div>
+                <div class="mb-3">
+                  <label for="hora" class="form-label">Hora del turno</label>
+                  <input type="time" class="form-control" id="horaUpdate" placeholder="Hora del turno">
+                </div>
+                <div class="mb-3">
+                  <label for="id_paciente" class="form-label">Id paciente</label>
+                  <input type="number" class="form-control" id="id_pacienteUpdate" placeholder="Id paciente">
+                </div>
+                <div class="mb-3">
+                  <label for="id_odontolotoUpdate" class="form-label">Id odontologo</label>
+                  <input type="number" class="form-control" id="id_odontolotoUpdate" placeholder="Id odontologo">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div id="response" style="display:none; margin:10px">
+      </div>
+      </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

@@ -1,39 +1,31 @@
-package com.example.ClinicaOdontologicaSpringMVC.Entity;
+package com.example.ClinicaOdontologicaSpringMVC.Dto.salida.paciente;
 
-
-import javax.persistence.*;
-
-@Entity
-@Table(name= "DOMICILIOS")
-public class Domicilio {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DomicilioSalidaDto {
     private int id;
     private String calle;
     private int numero;
     private String localidad;
     private String provincia;
 
-
-    public Domicilio(String calle, int numero, String localidad, String provincia) {
+    public DomicilioSalidaDto(int id, String calle, int numero, String localidad, String provincia) {
+        this.id = id;
         this.calle = calle;
         this.numero = numero;
         this.localidad = localidad;
         this.provincia = provincia;
     }
 
-    public Domicilio() {
-    }
+    public DomicilioSalidaDto(){
 
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getCalle() {
         return calle;
@@ -67,14 +59,5 @@ public class Domicilio {
         this.provincia = provincia;
     }
 
-    @Override
-    public String toString() {
-        return "🏠Domicilio: " +
-                "id: " + id +
-                ", calle: " + calle +
-                ", numero: " + numero +
-                ", localidad: " + localidad +
-                ", provincia: " + provincia;
-    }
-}
 
+}

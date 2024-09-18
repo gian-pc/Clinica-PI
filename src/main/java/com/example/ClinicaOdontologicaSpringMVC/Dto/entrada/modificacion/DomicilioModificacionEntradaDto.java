@@ -1,39 +1,42 @@
-package com.example.ClinicaOdontologicaSpringMVC.Entity;
+package com.example.ClinicaOdontologicaSpringMVC.Dto.entrada.modificacion;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.validation.constraints.NotNull;
 
 
-import javax.persistence.*;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DomicilioModificacionEntradaDto {
 
-@Entity
-@Table(name= "DOMICILIOS")
-public class Domicilio {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private int id;
+    @NotNull
     private String calle;
+    @NotNull
     private int numero;
+    @NotNull
     private String localidad;
+    @NotNull
     private String provincia;
 
+    public DomicilioModificacionEntradaDto() {
+    }
 
-    public Domicilio(String calle, int numero, String localidad, String provincia) {
+    public DomicilioModificacionEntradaDto(int id, String calle, int numero, String localidad, String provincia) {
+        this.id = id;
         this.calle = calle;
         this.numero = numero;
         this.localidad = localidad;
         this.provincia = provincia;
     }
 
-    public Domicilio() {
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
         this.id = id;
     }
-
-    public int getId() {
-        return id;
-    }
-
 
     public String getCalle() {
         return calle;
@@ -66,15 +69,4 @@ public class Domicilio {
     public void setProvincia(String provincia) {
         this.provincia = provincia;
     }
-
-    @Override
-    public String toString() {
-        return "🏠Domicilio: " +
-                "id: " + id +
-                ", calle: " + calle +
-                ", numero: " + numero +
-                ", localidad: " + localidad +
-                ", provincia: " + provincia;
-    }
 }
-
